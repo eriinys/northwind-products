@@ -22,13 +22,15 @@ public class UI {
                 What do you want to do?
                     1) Display all products
                     2) Display all customers
+                    3) Display all categories
                     0) Exit
                 Select an option:
                 """);
             int choice = Integer.parseInt(scanner.nextLine());
             switch(choice){
-                case 1 -> displayProdcuts();
+                case 1 -> displayProducts();
                 case 2 -> displayCustomers();
+                case 3-> displayAllCategories();
                 case 0 -> {
                     System.out.println("Exiting program...Good bye!");
                     in = false;
@@ -37,8 +39,7 @@ public class UI {
         }
     }
 
-    public void displayProdcuts(){
-
+    public void displayProducts(){
         String url = "jdbc:mysql://localhost:3306/northwind";
         String user = this.user;
         String password = this.password;
@@ -72,7 +73,6 @@ public class UI {
     }
 
     public void displayCustomers(){
-
         String url = "jdbc:mysql://localhost:3306/northwind";
         String user = this.user;
         String password = this.password;
@@ -104,6 +104,37 @@ public class UI {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    public void displayAllCategories(){
+        String url = "jdbc:mysql://localhost:3306/northwind";
+        String user = this.user;
+        String password = this.password;
+
+        String sql = "SELECT CategoryID, CategoryName FROM categories ORDER BY CategoryID";
+
+        dataSource.setURL(url);
+        dataSource.setUser(user);
+        dataSource.setPassword(password);
+
+        try(Connection conn = dataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
+
+            System.out.println("""
+                        ID  Name
+                        --- --------------
+                        """);
+
+            while(rs.next()) {
+                String CategoryID = rs.getString("CategoryId");
+                String CategoryName = rs.getString("CategoryName");
+
+                System.out.printf("%-3s %-14s %n", CategoryID, CategoryName);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
