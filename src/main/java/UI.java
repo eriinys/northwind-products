@@ -3,16 +3,15 @@ import java.sql.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 public class UI {
-    private final String user;
-    private final String password;
+    private final BasicDataSource dataSource;
+    private final Scanner scanner = new Scanner(System.in);
 
     public UI(String user, String password) {
-        this.user = user;
-        this.password = password;
+        this.dataSource = new BasicDataSource();
+        dataSource.setUrl("jdbc:mysql://localhost:3306/northwind");
+        dataSource.setUsername(user);
+        dataSource.setPassword(password);
     }
-
-    BasicDataSource dataSource = new BasicDataSource();
-    Scanner scanner = new Scanner(System.in);
 
     public void HomeScreen(){
         boolean in = true;
@@ -40,15 +39,7 @@ public class UI {
     }
 
     public void displayProducts(){
-        String url = "jdbc:mysql://localhost:3306/northwind";
-        String user = this.user;
-        String password = this.password;
-
         String sql = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM products";
-
-        dataSource.setUrl(url);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -72,15 +63,7 @@ public class UI {
     }
 
     public void displayCustomers(){
-        String url = "jdbc:mysql://localhost:3306/northwind";
-        String user = this.user;
-        String password = this.password;
-
         String sql = "SELECT ContactName, CompanyName, City, Country, Phone FROM customers";
-
-        dataSource.setUrl(url);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -105,15 +88,8 @@ public class UI {
     }
 
     public void displayAllCategories(){
-        String url = "jdbc:mysql://localhost:3306/northwind";
-        String user = this.user;
-        String password = this.password;
-
         String sql = "SELECT CategoryID, CategoryName FROM categories ORDER BY CategoryID";
 
-        dataSource.setUrl(url);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -164,6 +140,5 @@ public class UI {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
