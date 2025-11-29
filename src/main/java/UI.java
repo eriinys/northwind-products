@@ -1,17 +1,17 @@
 import java.util.*;
 import java.sql.*;
-import com.mysql.cj.jdbc.MysqlDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 public class UI {
-    private String user;
-    private String password;
+    private final String user;
+    private final String password;
 
     public UI(String user, String password) {
         this.user = user;
         this.password = password;
     }
 
-    MysqlDataSource dataSource = new MysqlDataSource();
+    BasicDataSource dataSource = new BasicDataSource();
     Scanner scanner = new Scanner(System.in);
 
     public void HomeScreen(){
@@ -46,8 +46,8 @@ public class UI {
 
         String sql = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM products";
 
-        dataSource.setURL(url);
-        dataSource.setUser(user);
+        dataSource.setUrl(url);
+        dataSource.setUsername(user);
         dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
@@ -55,17 +55,17 @@ public class UI {
             ResultSet rs = ps.executeQuery()) {
 
             System.out.println("""
-                        ID   Name           Price    Stock  
-                        ---- -------------- -------  ------ 
+                        ID   Name           Price    Stock
+                        ---- -------------- -------  ------
                         """);
 
             while (rs.next()) {
                 String ProductID = rs.getString("ProductID");
                 String ProductName = rs.getString("ProductName");
-                String UnitPrice = rs.getString("UnitPrice");
+                double UnitPrice = Double.parseDouble(rs.getString("UnitPrice"));
                 String UnitsInStock = rs.getString("UnitsInStock");
 
-                System.out.printf("%-4s %-14s %-8s %1s %n", ProductID, ProductName, UnitPrice, UnitsInStock);
+                System.out.printf("%-4s %-14s %-8.2f %1s %n", ProductID, ProductName, UnitPrice, UnitsInStock);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,8 +79,8 @@ public class UI {
 
         String sql = "SELECT ContactName, CompanyName, City, Country, Phone FROM customers";
 
-        dataSource.setURL(url);
-        dataSource.setUser(user);
+        dataSource.setUrl(url);
+        dataSource.setUsername(user);
         dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
@@ -113,8 +113,8 @@ public class UI {
 
         String sql = "SELECT CategoryID, CategoryName FROM categories ORDER BY CategoryID";
 
-        dataSource.setURL(url);
-        dataSource.setUser(user);
+        dataSource.setUrl(url);
+        dataSource.setUsername(user);
         dataSource.setPassword(password);
 
         try(Connection conn = dataSource.getConnection();
@@ -155,10 +155,10 @@ public class UI {
             while (rs.next()) {
                 String ProductID = rs.getString("ProductID");
                 String ProductName = rs.getString("ProductName");
-                String UnitPrice = rs.getString("UnitPrice");
+                double UnitPrice = Double.parseDouble(rs.getString("UnitPrice"));
                 String UnitsInStock = rs.getString("UnitsInStock");
 
-                System.out.printf("%-4s %-22s %-8s %1s %n", ProductID, ProductName, UnitPrice, UnitsInStock);
+                System.out.printf("%-4s %-22s %-8.2f %1s %n", ProductID, ProductName, UnitPrice, UnitsInStock);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
